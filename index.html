@@ -1,156 +1,460 @@
 <!DOCTYPE html>
-<html lang="tr" class="dark">
+<html lang="tr">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Faro - Gençlik İçerik ve Proje Platformu</title>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Idia - Öğrenci Araştırma ve Proje Platformu</title>
+  
+  <!-- Tailwind CSS CDN -->
   <script src="https://cdn.tailwindcss.com"></script>
-  <script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.6.0/dist/confetti.browser.min.js"></script>
-  <script>
-    tailwind.config = {
-      darkMode: 'class',
-      theme: {
-        extend: {
-          colors: {
-            brand: { 50: '#f0fdf4', 500: '#22c55e', 600: '#16a34a', 700: '#15803d' }
-          }
-        }
-      }
+  
+  <!-- Google Fonts -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800;900&display=swap" rel="stylesheet">
+
+  <!-- React 18 & ReactDOM 18 CDN -->
+  <script crossorigin src="https://unpkg.com/react@18/umd/react.production.min.js"></script>
+  <script crossorigin src="https://unpkg.com/react-dom@18/umd/react-dom.production.min.js"></script>
+  
+  <!-- Babel Standalone (JSX Derleyicisi) -->
+  <script src="https://unpkg.com/@babel/standalone/babel.min.js"></script>
+
+  <!-- Lucide Icons CDN -->
+  <script src="https://unpkg.com/lucide@latest"></script>
+
+  <!-- Canvas Confetti CDN -->
+  <script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.9.4/dist/confetti.browser.min.js"></script>
+
+  <style>
+    body {
+      font-family: 'Plus Jakarta Sans', sans-serif;
+      background-color: #ffffff;
+      color: #0f172a;
+      -webkit-tap-highlight-color: transparent;
     }
-  </script>
+    @keyframes fadeIn {
+      from { opacity: 0; transform: scale(0.96); }
+      to { opacity: 1; transform: scale(1); }
+    }
+    .animate-fadeIn {
+      animation: fadeIn 0.25s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+    }
+  </style>
 </head>
-<body class="bg-slate-900 text-slate-100 min-h-screen font-sans antialiased">
+<body class="bg-white min-h-screen">
 
-  <!-- Header / Navigation -->
-  <header class="sticky top-0 z-50 bg-slate-900/80 backdrop-blur-md border-b border-slate-800">
-    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 h-16 flex items-center justify-between">
-      <div class="flex items-center space-x-3">
-        <div class="w-10 h-10 rounded-xl bg-gradient-to-tr from-green-500 to-emerald-300 flex items-center justify-center font-bold text-slate-950 text-xl shadow-lg shadow-green-500/20">
-          F
-        </div>
-        <span class="text-2xl font-black tracking-tight bg-gradient-to-r from-white to-slate-400 bg-clip-text text-transparent">Faro</span>
-      </div>
+  <div id="root"></div>
 
-      <div class="flex items-center space-x-3">
-        <button id="btn-login" class="px-4 py-2 text-sm font-medium bg-slate-800 hover:bg-slate-700 text-slate-200 rounded-lg transition-all border border-slate-700 flex items-center space-x-2">
-          <span>Giriş Yap</span>
-        </button>
-        <button id="btn-new-post" class="px-4 py-2 text-sm font-semibold bg-green-500 hover:bg-green-600 text-slate-950 rounded-lg shadow-lg shadow-green-500/20 transition-all flex items-center space-x-1">
-          <span>+ Paylaş</span>
-        </button>
-      </div>
-    </div>
-  </header>
+  <script type="text/babel">
+    const { useState, useEffect, useMemo, createContext, useContext } = React;
 
-  <!-- Hero Section & Categories -->
-  <main class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8 space-y-8">
-    <div class="text-center space-y-4 max-w-2xl mx-auto pt-4">
-      <h1 class="text-4xl sm:text-5xl font-extrabold tracking-tight bg-gradient-to-r from-green-400 via-emerald-300 to-teal-200 bg-clip-text text-transparent">
-        Geleceğin Fikirleri Burada Parlıyor
-      </h1>
-      <p class="text-slate-400 text-base sm:text-lg">
-        Genç yeteneklerin projelerini paylaştığı, makaleler yayınladığı ve birlikte ürettiği açık platform.
-      </p>
-    </div>
-
-    <!-- Category Filters -->
-    <div class="flex items-center justify-center gap-2 overflow-x-auto py-2 scrollbar-none" id="categories-container">
-      <button class="cat-btn active px-4 py-2 rounded-full text-sm font-medium bg-green-500 text-slate-950 transition-all" data-cat="all">Tümü</button>
-      <button class="cat-btn px-4 py-2 rounded-full text-sm font-medium bg-slate-800 hover:bg-slate-700 text-slate-300 transition-all border border-slate-700" data-cat="Yazılım">💻 Yazılım</button>
-      <button class="cat-btn px-4 py-2 rounded-full text-sm font-medium bg-slate-800 hover:bg-slate-700 text-slate-300 transition-all border border-slate-700" data-cat="Tasarım">🎨 Tasarım</button>
-      <button class="cat-btn px-4 py-2 rounded-full text-sm font-medium bg-slate-800 hover:bg-slate-700 text-slate-300 transition-all border border-slate-700" data-cat="Bilim">🔬 Bilim</button>
-      <button class="cat-btn px-4 py-2 rounded-full text-sm font-medium bg-slate-800 hover:bg-slate-700 text-slate-300 transition-all border border-slate-700" data-cat="Girişimcilik">🚀 Girişimcilik</button>
-      <button class="cat-btn px-4 py-2 rounded-full text-sm font-medium bg-slate-800 hover:bg-slate-700 text-slate-300 transition-all border border-slate-700" data-cat="Sanat">🎭 Sanat</button>
-    </div>
-
-    <!-- Posts Grid -->
-    <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6" id="posts-grid">
-      <!-- Demo / Live posts will be injected here dynamically -->
-    </div>
-  </main>
-
-  <!-- Firebase Scripts Entegrasyonu -->
-  <script type="module">
-    import { initializeApp } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-app.js";
-    import { getAuth, GoogleAuthProvider, signInWithPopup, onAuthStateChanged, signOut } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-auth.js";
-    import { getFirestore, collection, addDoc, getDocs, query, orderBy, serverTimestamp } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore.js";
-
-    // GERÇEK FIREBASE ANAHTARLARIN
-    const firebaseConfig = {
-      apiKey: "AIzaSyDwJ9XNgiTe3S_ylK02IF0nj5NimHCN3f0",
-      authDomain: "idia-521ce.firebaseapp.com",
-      projectId: "idia-521ce",
-      storageBucket: "idia-521ce.firebasestorage.app",
-      messagingSenderId: "703904235668",
-      appId: "1:703904235668:web:95127e53d86264ae6cb481"
-    };
-
-    const app = initializeApp(firebaseConfig);
-    const auth = getAuth(app);
-    const db = getFirestore(app);
-    const provider = new GoogleAuthProvider();
-
-    let currentUser = null;
-
-    // Örnek Kartlar (Yükleme Öncesi Gösterim)
-    const demoPosts = [
-      { title: "Faro Platformu Canlıda!", category: "Yazılım", desc: "Genç araştırmacılar ve yazılımcılar için yeni nesil içerik paylaşım platformunu yayına aldık.", author: "Daria", readTime: "2 dk", likes: 12 },
-      { title: "UI/UX Tasarımda Modern Yaklaşımlar", category: "Tasarım", desc: "Kullanıcı deneyimini artıran mikro etkileşimler ve renk paleti seçim kılavuzu.", author: "Deniz", readTime: "4 dk", likes: 8 },
-      { title: "Yapay Zeka ve Geleceğin Meslekleri", category: "Bilim", desc: "Büyük dil modellerinin geliştirme süreçlerine etkisi ve yeni çalışma alanları.", author: "Arda", readTime: "5 dk", likes: 15 }
+    // --- KATEGORİ LİSTESİ VE RENK PALETİ ---
+    const CATEGORIES = [
+      { id: 'ALL', label: 'Tümü', colorHex: '#0F172A' },
+      { id: 'Tasarım', label: 'Tasarım', colorHex: '#40E0D0' },
+      { id: 'Yapay Zeka', label: 'Yapay Zeka', colorHex: '#FF007F' },
+      { id: 'Makale', label: 'Makale', colorHex: '#0055FF' },
+      { id: 'Yazılım', label: 'Yazılım', colorHex: '#8A2BE2' },
+      { id: 'Mühendislik', label: 'Mühendislik', colorHex: '#FF4500' },
+      { id: 'Sosyal Bilimler', label: 'Sosyal Bilimler', colorHex: '#39FF14' },
+      { id: 'Tıp & Sağlık', label: 'Tıp & Sağlık', colorHex: '#FFD700' },
+      { id: 'Sürdürülebilirlik', label: 'Sürdürülebilirlik', colorHex: '#00FA9A' },
+      { id: 'Girişimcilik', label: 'Girişimcilik', colorHex: '#FF1493' },
+      { id: 'Eğitim Teknolojileri', label: 'Eğitim Tek.', colorHex: '#1E90FF' },
+      { id: 'Diğer', label: 'Diğer', colorHex: '#C0C0C0' }
     ];
 
-    function renderPosts(posts) {
-      const grid = document.getElementById('posts-grid');
-      grid.innerHTML = posts.map(p => `
-        <div class="bg-slate-800/50 border border-slate-700/60 rounded-2xl p-6 flex flex-col justify-between hover:border-green-500/50 transition-all hover:-translate-y-1 shadow-lg">
-          <div class="space-y-3">
-            <div class="flex justify-between items-center">
-              <span class="text-xs font-semibold px-3 py-1 bg-green-500/10 text-green-400 border border-green-500/20 rounded-full">${p.category}</span>
-              <span class="text-xs text-slate-400">${p.readTime}</span>
-            </div>
-            <h3 class="text-xl font-bold text-slate-100">${p.title}</h3>
-            <p class="text-sm text-slate-400 line-clamp-3">${p.desc}</p>
-          </div>
-          <div class="pt-6 border-t border-slate-700/50 flex justify-between items-center mt-4 text-xs text-slate-400">
-            <span>Yazar: <strong class="text-slate-200">${p.author}</strong></span>
-            <button onclick="triggerConfetti()" class="flex items-center space-x-1 hover:text-green-400 transition-colors">
-              <span>❤️</span> <span>${p.likes}</span>
-            </button>
-          </div>
-        </div>
-      `).join('');
-    }
+    // --- ÖRNEK VERİ SETİ (LOCAL PERSISTENCE) ---
+    const INITIAL_POSTS = [
+      {
+        postId: 'post-1',
+        authorId: 'user-daria',
+        authorUsername: 'daria_dev',
+        authorAvatar: 'https://images.unsplash.com/photo-1534528741775-53994a69daeb?w=150',
+        title: 'Öğrenciler İçin Açık Kaynaklı Yapay Zeka Destekli Araştırma Asistanı',
+        contentText: 'Lise ve üniversite öğrencilerinin akademik literatür taramasını hızlandıran, makaleleri özetleyen ve kaynakçaları otomatik düzenleyen açık kaynaklı bir Python kütüphanesi geliştirdik. Bu projede NLP modellerini optimize ederek düşük donanımlı cihazlarda bile hızlı çalışmasını sağladık.',
+        category: 'Yapay Zeka',
+        attachments: [
+          { id: 'att-1', name: 'Proje Sunumu ve Mimarisi.pdf', type: 'PDF', url: 'https://example.com/doc.pdf' }
+        ],
+        coverPhotoUrl: 'https://images.unsplash.com/photo-1618005182384-a83a8bd57fbe?w=800',
+        createdAt: Date.now() - 3600000 * 5,
+        status: 'Published',
+        likesCount: 24,
+        likedBy: ['user-1', 'user-2'],
+        commentsCount: 3
+      },
+      {
+        postId: 'post-2',
+        authorId: 'user-mira',
+        authorUsername: 'mira_design',
+        authorAvatar: 'https://images.unsplash.com/photo-1517841905240-472988babdf9?w=150',
+        title: 'Sürdürülebilir Şehirler İçin Akıllı Geri Dönüşüm Kutusu Tasarımı',
+        contentText: 'Görsel tanıma sistemleri kullanarak atıkları anında ayrıştıran ve ödül puanı kazandıran yeni nesil akıllı sıfır atık konteyneri prototipi. Endüstriyel tasarım süreçlerini ve CAD çizimlerini paylaştık.',
+        category: 'Sürdürülebilirlik',
+        attachments: [],
+        coverPhotoUrl: 'https://images.unsplash.com/photo-1532996122724-e3c354a0b15b?w=800',
+        createdAt: Date.now() - 3600000 * 28,
+        status: 'Published',
+        likesCount: 18,
+        likedBy: [],
+        commentsCount: 1
+      }
+    ];
 
-    window.triggerConfetti = () => {
-      confetti({ particleCount: 60, spread: 60, origin: { y: 0.8 } });
+    // --- AUTH CONTEXT & GHOST MODE ---
+    const AuthContext = createContext();
+
+    const AuthProvider = ({ children }) => {
+      const [currentUser, setCurrentUser] = useState(() => {
+        const saved = localStorage.getItem('idia_user');
+        return saved ? JSON.parse(saved) : {
+          userId: 'user-daria',
+          username: 'daria_dev',
+          avatarUrl: 'https://images.unsplash.com/photo-1534528741775-53994a69daeb?w=150',
+          bio: '16 Yaşında Genç Geliştirici & Idia Kurucusu 🚀',
+          isGhostMode: false
+        };
+      });
+
+      const [isAuthModalOpen, setIsAuthModalOpen] = useState(false);
+      const [authReason, setAuthReason] = useState('');
+
+      const enableGhostMode = () => {
+        const ghostUser = {
+          userId: 'ghost-user',
+          username: 'Misafir_Okuyucu',
+          avatarUrl: 'https://api.dicebear.com/7.x/bottts/svg?seed=ghost',
+          bio: 'Ghost Mode ziyaretçisi',
+          isGhostMode: true
+        };
+        setCurrentUser(ghostUser);
+        localStorage.setItem('idia_user', JSON.stringify(ghostUser));
+      };
+
+      const loginAsRealUser = (username = 'daria_dev') => {
+        const realUser = {
+          userId: 'user-daria',
+          username: username,
+          avatarUrl: 'https://images.unsplash.com/photo-1534528741775-53994a69daeb?w=150',
+          bio: '16 Yaşında Genç Geliştirici & Idia Kurucusu 🚀',
+          isGhostMode: false
+        };
+        setCurrentUser(realUser);
+        localStorage.setItem('idia_user', JSON.stringify(realUser));
+        setIsAuthModalOpen(false);
+      };
+
+      const requireAuth = (actionCallback, reasonText = 'işlem yapmak') => {
+        if (currentUser?.isGhostMode) {
+          setAuthReason(reasonText);
+          setIsAuthModalOpen(true);
+          return false;
+        }
+        actionCallback();
+        return true;
+      };
+
+      return (
+        <AuthContext.Provider value={{
+          currentUser,
+          requireAuth,
+          enableGhostMode,
+          loginAsRealUser,
+          isAuthModalOpen,
+          setIsAuthModalOpen,
+          authReason
+        }}>
+          {children}
+        </AuthContext.Provider>
+      );
     };
 
-    // Auth Listeners
-    const loginBtn = document.getElementById('btn-login');
-    loginBtn.addEventListener('click', async () => {
-      if (currentUser) {
-        await signOut(auth);
-      } else {
-        try {
-          await signInWithPopup(auth, provider);
-        } catch (err) {
-          console.error("Giriş hatası:", err);
-        }
-      }
-    });
+    const useAuth = () => useContext(AuthContext);
 
-    onAuthStateChanged(auth, (user) => {
-      currentUser = user;
-      if (user) {
-        loginBtn.innerHTML = `<span>${user.displayName || 'Profil'}</span>`;
-      } else {
-        loginBtn.innerHTML = `<span>Giriş Yap</span>`;
-      }
-    });
+    // --- ZAMAN BİÇİMLENDİRME ---
+    const getFormattedTime = (timestamp) => {
+      const diffMinutes = Math.floor((Date.now() - timestamp) / 60000);
+      if (diffMinutes < 1) return 'Az önce';
+      if (diffMinutes < 60) return `${diffMinutes} dakika önce`;
+      const diffHours = Math.floor(diffMinutes / 60);
+      if (diffHours < 24) return `${diffHours} saat önce`;
+      return `${Math.floor(diffHours / 24)} gün önce`;
+    };
 
-    // Initial Render
-    renderPosts(demoPosts);
-  </script>
-</body>
-  </html>
-      
+    // --- OKUMA SÜRESİ HESAPLAMA ---
+    const getReadTime = (text) => {
+      if (!text) return '1 dk okuma';
+      const words = text.trim().split(/\s+/).length;
+      const mins = Math.max(1, Math.ceil(words / 150));
+      return `${mins} dk okuma`;
+    };
+
+    // --- HEADER BİLEŞENİ ---
+    const Header = ({ onOpenCreate, onOpenDrawer, currentTab, setCurrentTab }) => {
+      const { currentUser, setIsAuthModalOpen } = useAuth();
+
+      return (
+        <header className="sticky top-0 z-40 bg-white/95 backdrop-blur-md border-b border-slate-200/80 px-4 py-2.5">
+          <div className="max-w-6xl mx-auto flex items-center justify-between gap-2">
+            
+            {/* Sol: Menü & Logo */}
+            <div className="flex items-center gap-3">
+              <button 
+                onClick={onOpenDrawer}
+                className="p-2 rounded-xl hover:bg-slate-100 text-slate-700 transition active:scale-95 cursor-pointer"
+                title="Menüyü Aç"
+              >
+                <i data-lucide="menu" className="w-5 h-5"></i>
+              </button>
+
+              <div 
+                onClick={() => setCurrentTab('home')}
+                className="flex items-center gap-2 cursor-pointer group"
+              >
+                <div className="w-9 h-9 rounded-xl bg-gradient-to-tr from-amber-500 to-amber-300 flex items-center justify-center shadow-md font-black text-slate-950 text-xl border border-amber-200 group-hover:scale-105 transition">
+                  i
+                </div>
+                <h1 className="text-xl font-black text-slate-900 tracking-tight">
+                  idia<span className="text-amber-500">.</span>
+                </h1>
+              </div>
+            </div>
+
+            {/* Sağ: Destek Ol Butonu + Ghost Mode / Profil Status */}
+            <div className="flex items-center gap-2">
+              <a
+                href="https://www.buymeacoffee.com/daria"
+                target="_blank"
+                rel="noopener noreferrer"
+                className="flex items-center gap-1.5 px-3 py-1.5 rounded-full bg-gradient-to-r from-amber-400 via-amber-300 to-yellow-400 hover:from-amber-300 hover:to-yellow-300 text-slate-950 font-black text-xs shadow-[0_0_12px_rgba(251,191,36,0.6)] transition duration-200 active:scale-95 cursor-pointer border border-amber-200"
+                title="Buy Me a Coffee üzerinden destek ol ☕"
+              >
+                <span className="text-sm leading-none">☕</span>
+                <span className="hidden xs:inline sm:inline">Destek Ol</span>
+              </a>
+
+              {currentUser?.isGhostMode ? (
+                <button
+                  onClick={() => setIsAuthModalOpen(true)}
+                  className="flex items-center gap-1.5 px-2.5 sm:px-3 py-1.5 rounded-full bg-amber-500/20 hover:bg-amber-500/30 border border-amber-400/50 text-amber-900 text-xs font-bold transition active:scale-95 cursor-pointer"
+                >
+                  <span>👻</span>
+                  <span className="hidden sm:inline">Ghost Mode</span>
+                  <span className="bg-amber-400 text-slate-950 px-1.5 py-0.5 rounded-full text-[10px] font-extrabold ml-0.5">
+                    Giriş Yap
+                  </span>
+                </button>
+              ) : (
+                <button
+                  onClick={() => setCurrentTab('profile')}
+                  className="p-1 rounded-full hover:ring-2 hover:ring-amber-400 transition"
+                >
+                  <img
+                    src={currentUser?.avatarUrl}
+                    alt={currentUser?.username}
+                    className="w-8 h-8 rounded-full object-cover border border-slate-200"
+                  />
+                </button>
+              )}
+            </div>
+
+          </div>
+        </header>
+      );
+    };
+
+    // --- PROJE KARTI BİLEŞENİ ---
+    const PostCard = ({ post, onClick, onLikeToggle, isLiked, onShareSuccess }) => {
+      const [copied, setCopied] = useState(false);
+      const categoryMeta = CATEGORIES.find(c => c.id === post.category) || CATEGORIES[0];
+
+      const handleShare = (e) => {
+        e.stopPropagation();
+        const shareUrl = `${window.location.origin}?post=${post.postId}`;
+        navigator.clipboard.writeText(shareUrl).then(() => {
+          setCopied(true);
+          if (onShareSuccess) onShareSuccess(post.title);
+          setTimeout(() => setCopied(false), 2000);
+        });
+      };
+
+      return (
+        <article
+          onClick={onClick}
+          className="bg-white rounded-2xl border border-slate-200 hover:border-amber-400 p-4 sm:p-5 shadow-xs hover:shadow-md transition-all duration-200 cursor-pointer flex flex-col justify-between group"
+        >
+          <div>
+            {/* Header: Yazar & Rozet */}
+            <div className="flex items-center justify-between gap-2 mb-3">
+              <div className="flex items-center gap-2.5 overflow-hidden">
+                <img
+                  src={post.authorAvatar}
+                  alt={post.authorUsername}
+                  className="w-8 h-8 rounded-full object-cover border border-slate-200 flex-shrink-0"
+                />
+                <div className="truncate">
+                  <div className="flex items-center gap-1.5 truncate">
+                    <span className="font-bold text-xs sm:text-sm text-slate-900 truncate">
+                      @{post.authorUsername}
+                    </span>
+                    <span className="bg-amber-100 text-amber-900 border border-amber-300 text-[9px] font-extrabold px-1.5 py-0.2 rounded-full inline-flex items-center gap-0.5 flex-shrink-0">
+                      <i data-lucide="award" className="w-2.5 h-2.5 text-amber-600"></i>
+                      Yazar
+                    </span>
+                  </div>
+                  <div className="flex items-center gap-2 text-[10px] text-slate-500 mt-0.5">
+                    <span>{getFormattedTime(post.createdAt)}</span>
+                    <span>•</span>
+                    <span className="flex items-center gap-0.5 font-medium text-slate-600">
+                      <i data-lucide="clock" className="w-2.5 h-2.5"></i>
+                      {getReadTime(post.contentText)}
+                    </span>
+                  </div>
+                </div>
+              </div>
+
+              <span
+                className="px-2.5 py-1 rounded-md text-[11px] font-bold tracking-tight shadow-2xs truncate max-w-[140px] flex-shrink-0"
+                style={{
+                  backgroundColor: categoryMeta.colorHex,
+                  color: ['#FFD700', '#40E0D0', '#39FF14', '#C0C0C0'].includes(categoryMeta.colorHex) ? '#000000' : '#ffffff'
+                }}
+              >
+                {categoryMeta.label}
+              </span>
+            </div>
+
+            {/* Kapak Görseli */}
+            {post.coverPhotoUrl && (
+              <div className="w-full h-40 sm:h-48 rounded-xl overflow-hidden mb-3 bg-slate-100 relative">
+                <img
+                  src={post.coverPhotoUrl}
+                  alt={post.title}
+                  className="w-full h-full object-cover group-hover:scale-102 transition duration-300"
+                />
+              </div>
+            )}
+
+            {/* Başlık ve Özet */}
+            <h3 className="font-black text-slate-900 text-base sm:text-lg tracking-tight mb-2 line-clamp-2 group-hover:text-amber-600 transition">
+              {post.title}
+            </h3>
+            <p className="text-slate-600 text-xs sm:text-sm line-clamp-3 leading-relaxed mb-4">
+              {post.contentText}
+            </p>
+          </div>
+
+          {/* Alt Bilgi Barı: Beğeni, Yorum & Paylaş */}
+          <div className="flex items-center justify-between pt-3 border-t border-slate-100 text-xs text-slate-600">
+            <div className="flex items-center gap-4">
+              <button
+                onClick={(e) => {
+                  e.stopPropagation();
+                  onLikeToggle(post.postId);
+                }}
+                className={`flex items-center gap-1 font-semibold transition active:scale-90 ${isLiked ? 'text-red-600' : 'text-slate-600 hover:text-red-600'}`}
+              >
+                <i data-lucide="heart" className={`w-4 h-4 ${isLiked ? 'fill-red-600 text-red-600' : ''}`}></i>
+                <span>{post.likesCount || 0}</span>
+              </button>
+
+              <span className="flex items-center gap-1 font-semibold text-slate-600">
+                <i data-lucide="message-square" className="w-4 h-4 text-slate-400"></i>
+                <span>{post.commentsCount || 0}</span>
+              </span>
+            </div>
+
+            <button
+              onClick={handleShare}
+              className="p-1.5 rounded-lg bg-slate-100 hover:bg-slate-200 text-slate-600 transition flex items-center gap-1 text-[11px] font-bold cursor-pointer"
+              title="Bağlantıyı kopyala"
+            >
+              {copied ? (
+                <>
+                  <i data-lucide="check" className="w-3.5 h-3.5 text-emerald-600"></i>
+                  <span className="text-emerald-600">Kopyalandı!</span>
+                </>
+              ) : (
+                <>
+                  <i data-lucide="share-2" className="w-3.5 h-3.5 text-slate-500"></i>
+                  <span className="hidden sm:inline">Paylaş</span>
+                </>
+              )}
+            </button>
+          </div>
+        </article>
+      );
+    };
+
+    // --- ARAMA VE KATEGORİ FİLTRELERİ İLE ANA SAYFA ---
+    const HomePage = ({ posts, onSelectPost, onLikeToggle, onOpenCreate }) => {
+      const { currentUser } = useAuth();
+      const [searchQuery, setSearchQuery] = useState('');
+      const [selectedCategory, setSelectedCategory] = useState('ALL');
+      const [toastMessage, setToastMessage] = useState(null);
+
+      const handleShareToast = (title) => {
+        setToastMessage(`Link Kopyalandı! 🔗 (${title.slice(0, 20)}...)`);
+        setTimeout(() => setToastMessage(null), 3000);
+      };
+
+      const filteredPosts = useMemo(() => {
+        return posts.filter(post => {
+          const matchesCat = selectedCategory === 'ALL' || post.category === selectedCategory;
+          const matchesSearch = !searchQuery.trim() || 
+            post.title.toLowerCase().includes(searchQuery.toLowerCase()) ||
+            post.contentText.toLowerCase().includes(searchQuery.toLowerCase()) ||
+            post.authorUsername.toLowerCase().includes(searchQuery.toLowerCase());
+          return matchesCat && matchesSearch;
+        });
+      }, [posts, selectedCategory, searchQuery]);
+
+      return (
+        <div className="w-full pb-28 pt-2 px-4 max-w-6xl mx-auto min-h-screen">
+          
+          {/* Arama Çubuğu */}
+          <div className="my-3 relative">
+            <i data-lucide="search" className="w-4 h-4 absolute left-3.5 top-1/2 -translate-y-1/2 text-slate-400"></i>
+            <input
+              type="text"
+              value={searchQuery}
+              onChange={(e) => setSearchQuery(e.target.value)}
+              placeholder="Araştırma projesi, yazar veya içerik ara..."
+              className="w-full pl-10 pr-4 py-3 rounded-2xl bg-slate-100 border border-transparent focus:border-amber-400 focus:bg-white text-sm text-slate-900 outline-none transition shadow-2xs"
+            />
+            {searchQuery && (
+              <button 
+                onClick={() => setSearchQuery('')}
+                className="absolute right-3 top-1/2 -translate-y-1/2 text-slate-400 hover:text-slate-600 text-xs font-bold"
+              >
+                Temizle
+              </button>
+            )}
+          </div>
+
+          {/* Kategori Sekmeleri */}
+          <div className="flex items-center gap-2 overflow-x-auto pb-3 mb-4 scrollbar-none">
+            {CATEGORIES.map(cat => {
+              const active = selectedCategory === cat.id;
+              return (
+                <button
+                  key={cat.id}
+                  onClick={() => setSelectedCategory(cat.id)}
+                  className={`px-3.5 py-1.5 rounded-full text-xs font-extrabold whitespace-nowrap transition cursor-pointer flex-shrink-0 ${
+                    active 
+                      ? 'bg-slate-900 text-white shadow-md' 
+                      : 'bg-slate-100 hover:bg-slate-200 text-slate-700'
+                  }`}
+                >
+                  {cat.label}
+                </button>
+              );
+            })}
+          </div>
+
+          {/* Proje Kartları Izgarası */}
+          {filteredPosts.length === 0 ? (
+            <div className="text-center py-16 bg-slate-50 rounded-3xl border border-dashed border-slate-200 p-6 my-6">
+              <div className="w-16 h-16 bg-amber-100 text-amb
