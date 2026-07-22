@@ -1,9 +1,9 @@
 <!DOCTYPE html>
-<html lang="tr">
+<html lang="en">
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Idia - Öğrenci Araştırma ve Proje Platformu</title>
+  <title>Idia - Student Research & Project Sharing Platform</title>
   
   <!-- Tailwind CSS CDN -->
   <script src="https://cdn.tailwindcss.com"></script>
@@ -17,7 +17,7 @@
   <script crossorigin src="https://unpkg.com/react@18/umd/react.production.min.js"></script>
   <script crossorigin src="https://unpkg.com/react-dom@18/umd/react-dom.production.min.js"></script>
   
-  <!-- Babel Standalone (JSX Derleyicisi) -->
+  <!-- Babel Standalone (JSX Compiler) -->
   <script src="https://unpkg.com/@babel/standalone/babel.min.js"></script>
 
   <!-- Lucide Icons CDN -->
@@ -49,34 +49,34 @@
   <script type="text/babel">
     const { useState, useEffect, useMemo, createContext, useContext } = React;
 
-    // --- KATEGORİ LİSTESİ VE RENK PALETİ ---
+    // --- CATEGORY LIST AND COLOR PALETTE ---
     const CATEGORIES = [
-      { id: 'ALL', label: 'Tümü', colorHex: '#0F172A' },
-      { id: 'Tasarım', label: 'Tasarım', colorHex: '#40E0D0' },
-      { id: 'Yapay Zeka', label: 'Yapay Zeka', colorHex: '#FF007F' },
-      { id: 'Makale', label: 'Makale', colorHex: '#0055FF' },
-      { id: 'Yazılım', label: 'Yazılım', colorHex: '#8A2BE2' },
-      { id: 'Mühendislik', label: 'Mühendislik', colorHex: '#FF4500' },
-      { id: 'Sosyal Bilimler', label: 'Sosyal Bilimler', colorHex: '#39FF14' },
-      { id: 'Tıp & Sağlık', label: 'Tıp & Sağlık', colorHex: '#FFD700' },
-      { id: 'Sürdürülebilirlik', label: 'Sürdürülebilirlik', colorHex: '#00FA9A' },
-      { id: 'Girişimcilik', label: 'Girişimcilik', colorHex: '#FF1493' },
-      { id: 'Eğitim Teknolojileri', label: 'Eğitim Tek.', colorHex: '#1E90FF' },
-      { id: 'Diğer', label: 'Diğer', colorHex: '#C0C0C0' }
+      { id: 'ALL', label: 'All', colorHex: '#0F172A' },
+      { id: 'Design', label: 'Design', colorHex: '#40E0D0' },
+      { id: 'Artificial Intelligence', label: 'AI', colorHex: '#FF007F' },
+      { id: 'Research Article', label: 'Article', colorHex: '#0055FF' },
+      { id: 'Software', label: 'Software', colorHex: '#8A2BE2' },
+      { id: 'Engineering', label: 'Engineering', colorHex: '#FF4500' },
+      { id: 'Social Sciences', label: 'Social Sci.', colorHex: '#39FF14' },
+      { id: 'Medicine & Health', label: 'Medicine', colorHex: '#FFD700' },
+      { id: 'Sustainability', label: 'Sustainability', colorHex: '#00FA9A' },
+      { id: 'Entrepreneurship', label: 'Startups', colorHex: '#FF1493' },
+      { id: 'EdTech', label: 'EdTech', colorHex: '#1E90FF' },
+      { id: 'Other', label: 'Other', colorHex: '#C0C0C0' }
     ];
 
-    // --- ÖRNEK VERİ SETİ (LOCAL PERSISTENCE) ---
+    // --- SAMPLE INITIAL DATA ---
     const INITIAL_POSTS = [
       {
         postId: 'post-1',
         authorId: 'user-daria',
         authorUsername: 'daria_dev',
         authorAvatar: 'https://images.unsplash.com/photo-1534528741775-53994a69daeb?w=150',
-        title: 'Öğrenciler İçin Açık Kaynaklı Yapay Zeka Destekli Araştırma Asistanı',
-        contentText: 'Lise ve üniversite öğrencilerinin akademik literatür taramasını hızlandıran, makaleleri özetleyen ve kaynakçaları otomatik düzenleyen açık kaynaklı bir Python kütüphanesi geliştirdik. Bu projede NLP modellerini optimize ederek düşük donanımlı cihazlarda bile hızlı çalışmasını sağladık.',
-        category: 'Yapay Zeka',
+        title: 'Open Source AI-Powered Research Assistant for Students',
+        contentText: 'We developed an open-source Python library that accelerates academic literature reviews, summarizes papers, and formats citations automatically for high school and university students. By optimizing NLP models, we achieved high performance even on low-spec devices.',
+        category: 'Artificial Intelligence',
         attachments: [
-          { id: 'att-1', name: 'Proje Sunumu ve Mimarisi.pdf', type: 'PDF', url: 'https://example.com/doc.pdf' }
+          { id: 'att-1', name: 'Project Presentation & Architecture.pdf', type: 'PDF', url: 'https://example.com/doc.pdf' }
         ],
         coverPhotoUrl: 'https://images.unsplash.com/photo-1618005182384-a83a8bd57fbe?w=800',
         createdAt: Date.now() - 3600000 * 5,
@@ -90,9 +90,9 @@
         authorId: 'user-mira',
         authorUsername: 'mira_design',
         authorAvatar: 'https://images.unsplash.com/photo-1517841905240-472988babdf9?w=150',
-        title: 'Sürdürülebilir Şehirler İçin Akıllı Geri Dönüşüm Kutusu Tasarımı',
-        contentText: 'Görsel tanıma sistemleri kullanarak atıkları anında ayrıştıran ve ödül puanı kazandıran yeni nesil akıllı sıfır atık konteyneri prototipi. Endüstriyel tasarım süreçlerini ve CAD çizimlerini paylaştık.',
-        category: 'Sürdürülebilirlik',
+        title: 'Smart Recycling Bin Design for Sustainable Cities',
+        contentText: 'A next-generation zero-waste container prototype that sorts waste instantly using computer vision systems and rewards users with points. We shared our industrial design process along with complete CAD renderings.',
+        category: 'Sustainability',
         attachments: [],
         coverPhotoUrl: 'https://images.unsplash.com/photo-1532996122724-e3c354a0b15b?w=800',
         createdAt: Date.now() - 3600000 * 28,
@@ -113,7 +113,7 @@
           userId: 'user-daria',
           username: 'daria_dev',
           avatarUrl: 'https://images.unsplash.com/photo-1534528741775-53994a69daeb?w=150',
-          bio: '16 Yaşında Genç Geliştirici & Idia Kurucusu 🚀',
+          bio: '16 y/o Young Developer & Founder of Idia 🚀',
           isGhostMode: false
         };
       });
@@ -124,9 +124,9 @@
       const enableGhostMode = () => {
         const ghostUser = {
           userId: 'ghost-user',
-          username: 'Misafir_Okuyucu',
+          username: 'Guest_Reader',
           avatarUrl: 'https://api.dicebear.com/7.x/bottts/svg?seed=ghost',
-          bio: 'Ghost Mode ziyaretçisi',
+          bio: 'Ghost Mode Visitor',
           isGhostMode: true
         };
         setCurrentUser(ghostUser);
@@ -138,7 +138,7 @@
           userId: 'user-daria',
           username: username,
           avatarUrl: 'https://images.unsplash.com/photo-1534528741775-53994a69daeb?w=150',
-          bio: '16 Yaşında Genç Geliştirici & Idia Kurucusu 🚀',
+          bio: '16 y/o Young Developer & Founder of Idia 🚀',
           isGhostMode: false
         };
         setCurrentUser(realUser);
@@ -146,7 +146,7 @@
         setIsAuthModalOpen(false);
       };
 
-      const requireAuth = (actionCallback, reasonText = 'işlem yapmak') => {
+      const requireAuth = (actionCallback, reasonText = 'perform this action') => {
         if (currentUser?.isGhostMode) {
           setAuthReason(reasonText);
           setIsAuthModalOpen(true);
@@ -173,25 +173,25 @@
 
     const useAuth = () => useContext(AuthContext);
 
-    // --- ZAMAN BİÇİMLENDİRME ---
+    // --- TIME FORMATTING ---
     const getFormattedTime = (timestamp) => {
       const diffMinutes = Math.floor((Date.now() - timestamp) / 60000);
-      if (diffMinutes < 1) return 'Az önce';
-      if (diffMinutes < 60) return `${diffMinutes} dakika önce`;
+      if (diffMinutes < 1) return 'Just now';
+      if (diffMinutes < 60) return `${diffMinutes}m ago`;
       const diffHours = Math.floor(diffMinutes / 60);
-      if (diffHours < 24) return `${diffHours} saat önce`;
-      return `${Math.floor(diffHours / 24)} gün önce`;
+      if (diffHours < 24) return `${diffHours}h ago`;
+      return `${Math.floor(diffHours / 24)}d ago`;
     };
 
-    // --- OKUMA SÜRESİ HESAPLAMA ---
+    // --- READ TIME CALCULATOR ---
     const getReadTime = (text) => {
-      if (!text) return '1 dk okuma';
+      if (!text) return '1 min read';
       const words = text.trim().split(/\s+/).length;
       const mins = Math.max(1, Math.ceil(words / 150));
-      return `${mins} dk okuma`;
+      return `${mins} min read`;
     };
 
-    // --- HEADER BİLEŞENİ ---
+    // --- HEADER COMPONENT ---
     const Header = ({ onOpenCreate, onOpenDrawer, currentTab, setCurrentTab }) => {
       const { currentUser, setIsAuthModalOpen } = useAuth();
 
@@ -199,12 +199,12 @@
         <header className="sticky top-0 z-40 bg-white/95 backdrop-blur-md border-b border-slate-200/80 px-4 py-2.5">
           <div className="max-w-6xl mx-auto flex items-center justify-between gap-2">
             
-            {/* Sol: Menü & Logo */}
+            {/* Left: Menu & Logo */}
             <div className="flex items-center gap-3">
               <button 
                 onClick={onOpenDrawer}
                 className="p-2 rounded-xl hover:bg-slate-100 text-slate-700 transition active:scale-95 cursor-pointer"
-                title="Menüyü Aç"
+                title="Open Menu"
               >
                 <i data-lucide="menu" className="w-5 h-5"></i>
               </button>
@@ -222,17 +222,17 @@
               </div>
             </div>
 
-            {/* Sağ: Destek Ol Butonu + Ghost Mode / Profil Status */}
+            {/* Right: Support Button + Ghost Mode / Profile Status */}
             <div className="flex items-center gap-2">
               <a
                 href="https://www.buymeacoffee.com/daria"
                 target="_blank"
                 rel="noopener noreferrer"
                 className="flex items-center gap-1.5 px-3 py-1.5 rounded-full bg-gradient-to-r from-amber-400 via-amber-300 to-yellow-400 hover:from-amber-300 hover:to-yellow-300 text-slate-950 font-black text-xs shadow-[0_0_12px_rgba(251,191,36,0.6)] transition duration-200 active:scale-95 cursor-pointer border border-amber-200"
-                title="Buy Me a Coffee üzerinden destek ol ☕"
+                title="Support on Buy Me a Coffee ☕"
               >
                 <span className="text-sm leading-none">☕</span>
-                <span className="hidden xs:inline sm:inline">Destek Ol</span>
+                <span className="hidden xs:inline sm:inline">Support</span>
               </a>
 
               {currentUser?.isGhostMode ? (
@@ -243,13 +243,13 @@
                   <span>👻</span>
                   <span className="hidden sm:inline">Ghost Mode</span>
                   <span className="bg-amber-400 text-slate-950 px-1.5 py-0.5 rounded-full text-[10px] font-extrabold ml-0.5">
-                    Giriş Yap
+                    Sign In
                   </span>
                 </button>
               ) : (
                 <button
                   onClick={() => setCurrentTab('profile')}
-                  className="p-1 rounded-full hover:ring-2 hover:ring-amber-400 transition"
+                  className="p-1 rounded-full hover:ring-2 hover:ring-amber-400 transition cursor-pointer"
                 >
                   <img
                     src={currentUser?.avatarUrl}
@@ -265,7 +265,7 @@
       );
     };
 
-    // --- PROJE KARTI BİLEŞENİ ---
+    // --- POST CARD COMPONENT ---
     const PostCard = ({ post, onClick, onLikeToggle, isLiked, onShareSuccess }) => {
       const [copied, setCopied] = useState(false);
       const categoryMeta = CATEGORIES.find(c => c.id === post.category) || CATEGORIES[0];
@@ -286,7 +286,7 @@
           className="bg-white rounded-2xl border border-slate-200 hover:border-amber-400 p-4 sm:p-5 shadow-xs hover:shadow-md transition-all duration-200 cursor-pointer flex flex-col justify-between group"
         >
           <div>
-            {/* Header: Yazar & Rozet */}
+            {/* Header: Author & Badge */}
             <div className="flex items-center justify-between gap-2 mb-3">
               <div className="flex items-center gap-2.5 overflow-hidden">
                 <img
@@ -301,7 +301,7 @@
                     </span>
                     <span className="bg-amber-100 text-amber-900 border border-amber-300 text-[9px] font-extrabold px-1.5 py-0.2 rounded-full inline-flex items-center gap-0.5 flex-shrink-0">
                       <i data-lucide="award" className="w-2.5 h-2.5 text-amber-600"></i>
-                      Yazar
+                      Author
                     </span>
                   </div>
                   <div className="flex items-center gap-2 text-[10px] text-slate-500 mt-0.5">
@@ -326,7 +326,7 @@
               </span>
             </div>
 
-            {/* Kapak Görseli */}
+            {/* Cover Photo */}
             {post.coverPhotoUrl && (
               <div className="w-full h-40 sm:h-48 rounded-xl overflow-hidden mb-3 bg-slate-100 relative">
                 <img
@@ -337,7 +337,7 @@
               </div>
             )}
 
-            {/* Başlık ve Özet */}
+            {/* Title & Content Excerpt */}
             <h3 className="font-black text-slate-900 text-base sm:text-lg tracking-tight mb-2 line-clamp-2 group-hover:text-amber-600 transition">
               {post.title}
             </h3>
@@ -346,7 +346,7 @@
             </p>
           </div>
 
-          {/* Alt Bilgi Barı: Beğeni, Yorum & Paylaş */}
+          {/* Footer Bar: Likes, Comments & Share */}
           <div className="flex items-center justify-between pt-3 border-t border-slate-100 text-xs text-slate-600">
             <div className="flex items-center gap-4">
               <button
@@ -369,17 +369,17 @@
             <button
               onClick={handleShare}
               className="p-1.5 rounded-lg bg-slate-100 hover:bg-slate-200 text-slate-600 transition flex items-center gap-1 text-[11px] font-bold cursor-pointer"
-              title="Bağlantıyı kopyala"
+              title="Copy link"
             >
               {copied ? (
                 <>
                   <i data-lucide="check" className="w-3.5 h-3.5 text-emerald-600"></i>
-                  <span className="text-emerald-600">Kopyalandı!</span>
+                  <span className="text-emerald-600">Copied!</span>
                 </>
               ) : (
                 <>
                   <i data-lucide="share-2" className="w-3.5 h-3.5 text-slate-500"></i>
-                  <span className="hidden sm:inline">Paylaş</span>
+                  <span className="hidden sm:inline">Share</span>
                 </>
               )}
             </button>
@@ -388,7 +388,7 @@
       );
     };
 
-    // --- ARAMA VE KATEGORİ FİLTRELERİ İLE ANA SAYFA ---
+    // --- HOME PAGE WITH SEARCH & CATEGORY FILTERS ---
     const HomePage = ({ posts, onSelectPost, onLikeToggle, onOpenCreate }) => {
       const { currentUser } = useAuth();
       const [searchQuery, setSearchQuery] = useState('');
@@ -396,7 +396,7 @@
       const [toastMessage, setToastMessage] = useState(null);
 
       const handleShareToast = (title) => {
-        setToastMessage(`Link Kopyalandı! 🔗 (${title.slice(0, 20)}...)`);
+        setToastMessage(`Link copied! 🔗 (${title.slice(0, 20)}...)`);
         setTimeout(() => setToastMessage(null), 3000);
       };
 
@@ -414,14 +414,14 @@
       return (
         <div className="w-full pb-28 pt-2 px-4 max-w-6xl mx-auto min-h-screen">
           
-          {/* Arama Çubuğu */}
+          {/* Search Bar */}
           <div className="my-3 relative">
             <i data-lucide="search" className="w-4 h-4 absolute left-3.5 top-1/2 -translate-y-1/2 text-slate-400"></i>
             <input
               type="text"
               value={searchQuery}
               onChange={(e) => setSearchQuery(e.target.value)}
-              placeholder="Araştırma projesi, yazar veya içerik ara..."
+              placeholder="Search research projects, authors, or topics..."
               className="w-full pl-10 pr-4 py-3 rounded-2xl bg-slate-100 border border-transparent focus:border-amber-400 focus:bg-white text-sm text-slate-900 outline-none transition shadow-2xs"
             />
             {searchQuery && (
@@ -429,12 +429,12 @@
                 onClick={() => setSearchQuery('')}
                 className="absolute right-3 top-1/2 -translate-y-1/2 text-slate-400 hover:text-slate-600 text-xs font-bold"
               >
-                Temizle
+                Clear
               </button>
             )}
           </div>
 
-          {/* Kategori Sekmeleri */}
+          {/* Category Tabs */}
           <div className="flex items-center gap-2 overflow-x-auto pb-3 mb-4 scrollbar-none">
             {CATEGORIES.map(cat => {
               const active = selectedCategory === cat.id;
@@ -454,7 +454,8 @@
             })}
           </div>
 
-          {/* Proje Kartları Izgarası */}
+          {/* Project Cards Grid */}
           {filteredPosts.length === 0 ? (
             <div className="text-center py-16 bg-slate-50 rounded-3xl border border-dashed border-slate-200 p-6 my-6">
-              <div className="w-16 h-16 bg-amber-100 text-amb
+              <div className="w-16 h-16 bg-amber-100 text-amber-600 rounded-full flex items-center justify-center mx-auto mb-3 font-black text-2xl">
+ 
